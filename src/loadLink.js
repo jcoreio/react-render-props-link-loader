@@ -32,7 +32,7 @@ const loadLink = async ({
     Object.keys(props).forEach(key => link.setAttribute(key, props[key]))
     link.onload = resolve
     link.onerror = reject
-    if (document.body) document.body.appendChild(link)
+    if (document.head) document.head.appendChild(link)
   })
 }
 
