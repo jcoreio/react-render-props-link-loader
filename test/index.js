@@ -103,7 +103,7 @@ describe('LinkLoader', () => {
     expect(arg1.loaded).to.be.true
     expect(arg1.error).to.be.null
   })
-  it(`doesn't call onLoad after href= changes`, async function(): Promise<void> {
+  it(`doesn't call onLoad after href changes`, async function(): Promise<void> {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
@@ -151,7 +151,7 @@ describe('LinkLoader', () => {
       error: null,
     })
   })
-  it(`doesn't call onError after href= changes`, async function(): Promise<void> {
+  it(`doesn't call onError after href changes`, async function(): Promise<void> {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
