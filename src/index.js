@@ -28,13 +28,7 @@ export class LinksRegistry {
   }> = []
 
   linkTags(): React.Node {
-    return (
-      <React.Fragment>
-        {this.links.map(props => (
-          <link key={props.href} {...props} />
-        ))}
-      </React.Fragment>
-    )
+    return this.links.map((props, index) => <link key={index} {...props} />)
   }
 }
 

@@ -266,7 +266,12 @@ describe(`SSR`, function() {
     })
     expect(comp.text()).to.equal('hello')
 
-    const head = mount(registry.linkTags())
+    const head = mount(
+      <head>
+        <meta key={0} />
+        {registry.linkTags()}
+      </head>
+    )
     expect(head.find('link').prop('href')).to.equal('SSR')
   })
 })
