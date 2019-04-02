@@ -11,7 +11,7 @@ const loadLink = async ({
 }: InnerProps): Promise<void> => {
   const { href } = props
   if (linksRegistry) {
-    results[href] = { error: undefined }
+    linksRegistry.results[href] = { error: undefined }
     linksRegistry.links.push(props)
     return
   }
@@ -39,29 +39,37 @@ const loadLink = async ({
 const results: { [href: string]: { error: ?Error } } = {}
 const promises: { [href: string]: Promise<any> } = {}
 
-export default (props: InnerProps): Promise<any> =>
-  promises[props.href] ||
-  (promises[props.href] = loadLink(props).then(
-    () => (results[props.href] = { error: null }),
-    (error: any = new Error(`failed to load ${props.href}`)) => {
-      results[props.href] = { error }
-      throw error
-    }
-  ))
+export default (props: InnerProps): Promise<any> => {
+  const { linksRegistry } = props
+  const _promises = linksRegistry ? linksRegistry.promises : promises
+  const _results = linksRegistry ? linksRegistry.results : results
+  return (
+    _promises[props.href] ||
+    (_promises[props.href] = loadLink(props).then(
+      () => (_results[props.href] = { error: null }),
+      (error: any = new Error(`failed to load ${props.href}`)) => {
+        _results[props.href] = { error }
+        throw error
+      }
+    ))
+  )
+}
 
 export function getState({
   href,
+  linksRegistry,
 }: InnerProps): {
   loading: boolean,
   loaded: boolean,
   error: ?Error,
   promise: ?Promise<any>,
 } {
-  const result = results[href]
+  const result = linksRegistry ? linksRegistry.results[href] : results[href]
+  const promise = linksRegistry ? linksRegistry.promises[href] : promises[href]
   return {
     loading: result == null,
     loaded: result ? !result.error : false,
     error: result && result.error,
-    promise: promises[href],
+    promise,
   }
 }

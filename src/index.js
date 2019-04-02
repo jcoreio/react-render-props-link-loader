@@ -26,9 +26,11 @@ export class LinksRegistry {
   links: Array<{
     href: string,
   }> = []
+  results: { [href: string]: { error: ?Error } } = {}
+  promises: { [href: string]: Promise<any> } = {}
 
   linkTags(): React.Node {
-    return this.links.map((props, index) => <link key={index} {...props} />)
+    return this.links.map(props => <link key={props.href} {...props} />)
   }
 }
 
