@@ -1,7 +1,7 @@
 {
-  "name": "react-render-props-script-loader",
+  "name": "react-render-props-link-loader",
   "version": "0.0.0-development",
-  "description": "an easier to use dynamic script loader",
+  "description": "an easier to use dynamic <link> tag loader",
   "main": "index.js",
   "module": "es/index.js",
   "sideEffects": false,
@@ -67,21 +67,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jcoreio/react-render-props-script-loader.git"
+    "url": "https://github.com/jcoreio/react-render-props-link-loader.git"
   },
   "keywords": [
     "react",
-    "script",
+    "link",
+    "css",
+    "style",
+    "webfont",
     "loader",
-    "script-tag",
-    "dynamic-script"
+    "link-tag"
   ],
   "author": "Andy Edwards",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jcoreio/react-render-props-script-loader/issues"
+    "url": "https://github.com/jcoreio/react-render-props-link-loader/issues"
   },
-  "homepage": "https://github.com/jcoreio/react-render-props-script-loader#readme",
+  "homepage": "https://github.com/jcoreio/react-render-props-link-loader#readme",
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.6",

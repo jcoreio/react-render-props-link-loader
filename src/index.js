@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import loadScript, { getState } from './loadScript'
+import loadLink, { getState } from './loadLink'
 import PropTypes from 'prop-types'
 
 export type State = {
@@ -12,23 +12,22 @@ export type State = {
 }
 
 export type Props = {
-  src: string,
-  type?: ?string,
+  href: string,
   onLoad?: ?() => any,
   onError?: ?(error: Error) => any,
   children?: ?(state: State) => ?React.Node,
 }
 
-export const ScriptsRegistryContext: React.Context<?ScriptsRegistry> = React.createContext(
+export const LinksRegistryContext: React.Context<?LinksRegistry> = React.createContext(
   null
 )
 
-export default class ScriptLoader extends React.PureComponent<Props, State> {
+export default class LinkLoader extends React.PureComponent<Props, State> {
   state = getState(this.props)
   promise: ?Promise<void>
 
   static propTypes = {
-    src: PropTypes.string.isRequired,
+    href: PropTypes.string.isRequired,
     onLoad: PropTypes.func,
     onError: PropTypes.func,
     children: PropTypes.func,
@@ -42,7 +41,7 @@ export default class ScriptLoader extends React.PureComponent<Props, State> {
       children, // eslint-disable-line no-unused-vars
       ...loadProps
     } = props
-    const promise = loadScript(loadProps)
+    const promise = loadLink(loadProps)
     if (this.promise !== promise) {
       this.promise = promise
       this.setState(getState(props))
@@ -74,12 +73,19 @@ export default class ScriptLoader extends React.PureComponent<Props, State> {
   }
 
   render(): React.Node {
-    const { children, type, src } = this.props
+    const {
+      children,
+      /* eslint-disable no-unused-vars */
+      onLoad,
+      onError,
+      /* eslint-enable no-unused-vars */
+      ...props
+    } = this.props
     return (
-      <ScriptsRegistryContext.Consumer>
-        {(context: ?ScriptsRegistry) => {
+      <LinksRegistryContext.Consumer>
+        {(context: ?LinksRegistry) => {
           if (context) {
-            context.scripts.push({ type, src })
+            context.links.push(props)
             if (!children) return <React.Fragment />
             const result = children({
               loading: true,
@@ -95,22 +101,21 @@ export default class ScriptLoader extends React.PureComponent<Props, State> {
           }
           return null
         }}
-      </ScriptsRegistryContext.Consumer>
+      </LinksRegistryContext.Consumer>
     )
   }
 }
 
-export class ScriptsRegistry {
-  scripts: Array<{
-    type?: ?string,
-    src: string,
+export class LinksRegistry {
+  links: Array<{
+    href: string,
   }> = []
 
-  scriptTags(): React.Node {
+  linkTags(): React.Node {
     return (
       <React.Fragment>
-        {this.scripts.map(({ type, src }, index) => (
-          <script key={index} type={type} src={src} />
+        {this.links.map((props, index) => (
+          <link key={index} {...props} />
         ))}
       </React.Fragment>
     )
