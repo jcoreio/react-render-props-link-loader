@@ -91,8 +91,8 @@ describe('LinkLoader', () => {
     )
     expect(comp.text()).to.equal('hello')
     expect(render.lastCall.lastArg).to.containSubset({
-      loading: true,
-      loaded: false,
+      loading: false,
+      loaded: true,
       error: undefined,
     })
     const link = document.getElementById('linkId')
@@ -252,20 +252,21 @@ describe(`SSR`, function() {
     this.timeout(10000)
     const render = sinon.spy(() => 'hello')
     const registry = new LinksRegistry()
-    mount(
+    const comp = mount(
       <LinksRegistryContext.Provider value={registry}>
-        <LinkLoader href="foo" id="linkId">
+        <LinkLoader href="SSR" id="linkId">
           {render}
         </LinkLoader>
       </LinksRegistryContext.Provider>
     )
-    const comp = mount(registry.linkTags())
-
     expect(render.lastCall.lastArg).to.containSubset({
-      loading: true,
-      loaded: false,
-      error: null,
+      loading: false,
+      loaded: true,
+      error: undefined,
     })
-    expect(comp.find('link').prop('href')).to.equal('foo')
+    expect(comp.text()).to.equal('hello')
+
+    const head = mount(registry.linkTags())
+    expect(head.find('link').prop('href')).to.equal('SSR')
   })
 })
