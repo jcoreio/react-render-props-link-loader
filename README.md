@@ -36,12 +36,12 @@ import LinkLoader from 'react-render-props-link-loader'
 
 import SomeView from './SomeView'
 
-export const SomeViewContainer = props => (
+export const SomeViewContainer = (props) => (
   <LinkLoader
     href="https://fonts.googleapis.com/css?family=Rubik:300,400,500"
     rel="stylesheet"
     onLoad={() => console.log('loaded fonts!')}
-    onError={error => console.error('failed to load fonts', error.stack)}
+    onError={(error) => console.error('failed to load fonts', error.stack)}
   >
     {({ loading, error }) => {
       if (loading) return <h3>Loading fonts...</h3>

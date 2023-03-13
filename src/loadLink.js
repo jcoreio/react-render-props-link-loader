@@ -2,6 +2,17 @@
 /* eslint-env browser */
 import { type InnerProps } from './index'
 
+let nonce: ?string
+function getNonce(): string | null {
+  if (nonce === undefined) {
+    const node = document.querySelector(
+      'meta[property="csp-nonce"], meta[name="csp-nonce"]'
+    )
+    nonce = node ? node.getAttribute('content') ?? null : null
+  }
+  return nonce ?? null
+}
+
 const loadLink = async ({
   linksRegistry,
   onLoad,
@@ -20,7 +31,7 @@ const loadLink = async ({
       'you must pass a linksRegistry if calling on the server side'
     )
   }
-  if (typeof document.querySelector === 'function') {
+  if (typeof (document: any).querySelector === 'function') {
     if (document.querySelector(`link[href="${href}"]`)) {
       results[href] = { error: undefined }
       return
@@ -29,7 +40,8 @@ const loadLink = async ({
   return new Promise((resolve: () => void, reject: (error?: Error) => void) => {
     const link = document.createElement('link')
     link.href = href
-    Object.keys(props).forEach(key => link.setAttribute(key, props[key]))
+    ;(link: any).nonce = getNonce()
+    Object.keys(props).forEach((key) => link.setAttribute(key, props[key]))
     link.onload = resolve
     link.onerror = reject
     if (document.head) document.head.appendChild(link)
@@ -55,10 +67,7 @@ export default (props: InnerProps): Promise<any> => {
   )
 }
 
-export function getState({
-  href,
-  linksRegistry,
-}: InnerProps): {
+export function getState({ href, linksRegistry }: InnerProps): {
   loading: boolean,
   loaded: boolean,
   error: ?Error,

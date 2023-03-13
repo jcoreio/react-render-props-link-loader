@@ -13,9 +13,9 @@ import loadLink from '../src/loadLink'
 
 describe('LinkLoader', () => {
   afterEach(() => {
-    document.querySelectorAll('link').forEach(link => link.remove())
+    document.querySelectorAll('link').forEach((link) => link.remove())
   })
-  it('load works', async function(): Promise<void> {
+  it('load works', async function (): Promise<void> {
     this.timeout(10000)
     const render = sinon.spy(() => 'hello')
     let onLoad, onError
@@ -44,7 +44,7 @@ describe('LinkLoader', () => {
       error: null,
     })
   })
-  it('error works', async function(): Promise<void> {
+  it('error works', async function (): Promise<void> {
     this.timeout(10000)
     const render = sinon.spy(() => 'hello')
     let onLoad, onError
@@ -72,7 +72,7 @@ describe('LinkLoader', () => {
     expect(arg1.loaded).to.be.false
     expect(arg1.error).to.be.an.instanceOf(Error)
   })
-  it(`doesn't create a duplicate link`, async function(): Promise<void> {
+  it(`doesn't create a duplicate link`, async function (): Promise<void> {
     this.timeout(10000)
     const preexisting = document.createElement('link')
     preexisting.href = 'baz'
@@ -103,7 +103,7 @@ describe('LinkLoader', () => {
     expect(arg1.loaded).to.be.true
     expect(arg1.error).to.be.null
   })
-  it(`doesn't call onLoad after href changes`, async function(): Promise<void> {
+  it(`doesn't call onLoad after href changes`, async function (): Promise<void> {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
@@ -119,18 +119,13 @@ describe('LinkLoader', () => {
       </LinkLoader>
     )
     comp
-      .setProps(
-        (
-          <LinkLoader
-            href="qlomb"
-            id="linkId2"
-            onLoad={onLoad}
-            onError={onError}
-          >
-            {render}
-          </LinkLoader>
-        ).props
-      )
+      .setProps({
+        href: 'qlomb',
+        id: 'linkId2',
+        onLoad,
+        onError,
+        children: render,
+      })
       .update()
     expect(render.lastCall.lastArg).to.containSubset({
       loading: true,
@@ -151,7 +146,7 @@ describe('LinkLoader', () => {
       error: null,
     })
   })
-  it(`doesn't call onError after href changes`, async function(): Promise<void> {
+  it(`doesn't call onError after href changes`, async function (): Promise<void> {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
@@ -167,18 +162,13 @@ describe('LinkLoader', () => {
       </LinkLoader>
     )
     comp
-      .setProps(
-        (
-          <LinkLoader
-            href="qlombage"
-            id="linkId2"
-            onLoad={onLoad}
-            onError={onError}
-          >
-            {render}
-          </LinkLoader>
-        ).props
-      )
+      .setProps({
+        href: 'qlombage',
+        id: 'linkId2',
+        onLoad,
+        onError,
+        children: render,
+      })
       .update()
     expect(render.lastCall.lastArg).to.containSubset({
       loading: true,
@@ -199,7 +189,7 @@ describe('LinkLoader', () => {
       error: null,
     })
   })
-  it(`doesn't call onLoad after unmount`, async function(): Promise<void> {
+  it(`doesn't call onLoad after unmount`, async function (): Promise<void> {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
@@ -213,10 +203,10 @@ describe('LinkLoader', () => {
     const link = document.getElementById('linkId')
     if (!link) throw new Error('missing link')
     ;(link: any).onload()
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
     expect(oldOnLoad.called).to.be.false
   })
-  it(`doesn't call onError after unmount`, async function(): Promise<void> {
+  it(`doesn't call onError after unmount`, async function (): Promise<void> {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
@@ -230,25 +220,27 @@ describe('LinkLoader', () => {
     const link = document.getElementById('linkId')
     if (!link) throw new Error('missing link')
     ;(link: any).onerror(new Error())
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
     expect(oldOnError.called).to.be.false
   })
 })
-describe(`loadLink`, function() {
-  it(`errors if document is not defined`, async function(): Promise<void> {
+describe(`loadLink`, function () {
+  it(`errors if document is not defined`, async function (): Promise<void> {
     const prevDocument = document
     document = undefined // eslint-disable-line no-global-assign
     try {
       let error: ?Error
-      await loadLink({ href: 'documentundefined' }).catch(err => (error = err))
+      await loadLink({ href: 'documentundefined' }).catch(
+        (err) => (error = err)
+      )
       expect(error).to.exist
     } finally {
       document = prevDocument // eslint-disable-line no-global-assign
     }
   })
 })
-describe(`SSR`, function() {
-  it(`works`, function() {
+describe(`SSR`, function () {
+  it(`works`, function () {
     this.timeout(10000)
     const render = sinon.spy(() => 'hello')
     const registry = new LinksRegistry()

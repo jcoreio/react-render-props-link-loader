@@ -16,10 +16,13 @@ export type Props = {
   onLoad?: ?() => any,
   onError?: ?(error: Error) => any,
   children?: ?(state: State) => ?React.Node,
+  ...
 }
 
-export type InnerProps = Props & {
+export type InnerProps = {
+  ...$Exact<Props>,
   linksRegistry?: ?LinksRegistry,
+  ...
 }
 
 export class LinksRegistry {
@@ -29,14 +32,19 @@ export class LinksRegistry {
   results: { [href: string]: { error: ?Error } } = {}
   promises: { [href: string]: Promise<any> } = {}
 
-  linkTags(): React.Node {
-    return this.links.map(props => <link key={props.href} {...props} />)
+  linkTags(options?: {| nonce?: string |}): React.Node {
+    return this.links.map((props) => (
+      <link
+        {...props}
+        nonce={options ? options.nonce : undefined}
+        key={props.href}
+      />
+    ))
   }
 }
 
-export const LinksRegistryContext: React.Context<?LinksRegistry> = React.createContext(
-  null
-)
+export const LinksRegistryContext: React.Context<?LinksRegistry> =
+  React.createContext(null)
 
 class LinkLoader extends React.PureComponent<InnerProps, State> {
   mounted: boolean = false
@@ -95,9 +103,9 @@ class LinkLoader extends React.PureComponent<InnerProps, State> {
   }
 }
 
-const ConnectedLinksLoader = (props: Props) => (
+const ConnectedLinksLoader: React.ComponentType<Props> = (props: Props) => (
   <LinksRegistryContext.Consumer>
-    {linksRegistry => <LinkLoader {...props} linksRegistry={linksRegistry} />}
+    {(linksRegistry) => <LinkLoader {...props} linksRegistry={linksRegistry} />}
   </LinksRegistryContext.Consumer>
 )
 export default ConnectedLinksLoader
