@@ -18,6 +18,8 @@ const loadLink = async ({
   onLoad,
   onError,
   children,
+  // eslint-disable-next-line no-unused-vars
+  act,
   ...props
 }: InnerProps): Promise<void> => {
   const { href } = props
@@ -58,7 +60,7 @@ export default (props: InnerProps): Promise<any> => {
   return (
     _promises[props.href] ||
     (_promises[props.href] = loadLink(props).then(
-      () => (_results[props.href] = { error: null }),
+      () => (_results[props.href] = { error: undefined }),
       (error: any = new Error(`failed to load ${props.href}`)) => {
         _results[props.href] = { error }
         throw error
@@ -67,12 +69,12 @@ export default (props: InnerProps): Promise<any> => {
   )
 }
 
-export function getState({ href, linksRegistry }: InnerProps): {
+export function getState({ href, linksRegistry }: InnerProps): {|
   loading: boolean,
   loaded: boolean,
   error: ?Error,
   promise: ?Promise<any>,
-} {
+|} {
   const result = linksRegistry ? linksRegistry.results[href] : results[href]
   const promise = linksRegistry ? linksRegistry.promises[href] : promises[href]
   return {

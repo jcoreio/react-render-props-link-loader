@@ -14,7 +14,7 @@
  */
 
 declare module '@wojtekmaj/enzyme-adapter-react-17' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,65 +23,65 @@ declare module '@wojtekmaj/enzyme-adapter-react-17' {
  * needed.
  */
 declare module '@wojtekmaj/enzyme-adapter-react-17/build/detectFiberTags' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@wojtekmaj/enzyme-adapter-react-17/build/findCurrentFiberUsingSlowPath' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@wojtekmaj/enzyme-adapter-react-17/build' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@wojtekmaj/enzyme-adapter-react-17/build/ReactSeventeenAdapter' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@wojtekmaj/enzyme-adapter-react-17/src/detectFiberTags' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@wojtekmaj/enzyme-adapter-react-17/src/findCurrentFiberUsingSlowPath' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@wojtekmaj/enzyme-adapter-react-17/src' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@wojtekmaj/enzyme-adapter-react-17/src/ReactSeventeenAdapter' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module '@wojtekmaj/enzyme-adapter-react-17/build/detectFiberTags.js' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build/detectFiberTags'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build/detectFiberTags'>
 }
 declare module '@wojtekmaj/enzyme-adapter-react-17/build/findCurrentFiberUsingSlowPath.js' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build/findCurrentFiberUsingSlowPath'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build/findCurrentFiberUsingSlowPath'>
 }
 declare module '@wojtekmaj/enzyme-adapter-react-17/build/index' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build'>
 }
 declare module '@wojtekmaj/enzyme-adapter-react-17/build/index.js' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build'>
 }
 declare module '@wojtekmaj/enzyme-adapter-react-17/build/ReactSeventeenAdapter.js' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build/ReactSeventeenAdapter'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/build/ReactSeventeenAdapter'>
 }
 declare module '@wojtekmaj/enzyme-adapter-react-17/src/detectFiberTags.js' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src/detectFiberTags'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src/detectFiberTags'>
 }
 declare module '@wojtekmaj/enzyme-adapter-react-17/src/findCurrentFiberUsingSlowPath.js' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src/findCurrentFiberUsingSlowPath'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src/findCurrentFiberUsingSlowPath'>
 }
 declare module '@wojtekmaj/enzyme-adapter-react-17/src/index' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src'>
 }
 declare module '@wojtekmaj/enzyme-adapter-react-17/src/index.js' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src'>
 }
 declare module '@wojtekmaj/enzyme-adapter-react-17/src/ReactSeventeenAdapter.js' {
-  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src/ReactSeventeenAdapter'>;
+  declare module.exports: $Exports<'@wojtekmaj/enzyme-adapter-react-17/src/ReactSeventeenAdapter'>
 }

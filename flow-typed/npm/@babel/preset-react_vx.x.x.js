@@ -14,7 +14,7 @@
  */
 
 declare module '@babel/preset-react' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,13 +23,13 @@ declare module '@babel/preset-react' {
  * needed.
  */
 declare module '@babel/preset-react/lib' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module '@babel/preset-react/lib/index' {
-  declare module.exports: $Exports<'@babel/preset-react/lib'>;
+  declare module.exports: $Exports<'@babel/preset-react/lib'>
 }
 declare module '@babel/preset-react/lib/index.js' {
-  declare module.exports: $Exports<'@babel/preset-react/lib'>;
+  declare module.exports: $Exports<'@babel/preset-react/lib'>
 }

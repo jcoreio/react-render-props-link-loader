@@ -4,7 +4,7 @@
 
 import { describe, it, afterEach } from 'mocha'
 import * as React from 'react'
-import { mount } from 'enzyme'
+import { cleanup, render as mount, act } from '@testing-library/react'
 import { expect } from 'chai'
 import sinon from 'sinon'
 
@@ -13,10 +13,11 @@ import loadLink from '../src/loadLink'
 
 describe('LinkLoader', () => {
   afterEach(() => {
+    cleanup()
     document.querySelectorAll('link').forEach((link) => link.remove())
   })
-  it('load works', async function (): Promise<void> {
-    this.timeout(10000)
+  it('load works', async function () {
+    this.timeout(3000)
     const render = sinon.spy(() => 'hello')
     let onLoad, onError
     const promise = new Promise((resolve: any, reject: any) => {
@@ -24,11 +25,17 @@ describe('LinkLoader', () => {
       onError = reject
     })
     const comp = mount(
-      <LinkLoader href="foo" id="linkId" onLoad={onLoad} onError={onError}>
+      <LinkLoader
+        href="foo"
+        id="linkId"
+        onLoad={onLoad}
+        onError={onError}
+        act={act}
+      >
         {render}
       </LinkLoader>
     )
-    expect(comp.text()).to.equal('hello')
+    expect(comp.container.innerHTML).to.equal('hello')
     expect(render.lastCall.lastArg).to.containSubset({
       loading: true,
       loaded: false,
@@ -41,10 +48,10 @@ describe('LinkLoader', () => {
     expect(render.lastCall.lastArg).to.containSubset({
       loading: false,
       loaded: true,
-      error: null,
+      error: undefined,
     })
   })
-  it('error works', async function (): Promise<void> {
+  it('error works', async function () {
     this.timeout(10000)
     const render = sinon.spy(() => 'hello')
     let onLoad, onError
@@ -53,11 +60,17 @@ describe('LinkLoader', () => {
       onError = reject
     })
     const comp = mount(
-      <LinkLoader href="bar" id="linkId" onLoad={onLoad} onError={onError}>
+      <LinkLoader
+        href="bar"
+        id="linkId"
+        onLoad={onLoad}
+        onError={onError}
+        act={act}
+      >
         {render}
       </LinkLoader>
     )
-    expect(comp.text()).to.equal('hello')
+    expect(comp.container.innerHTML).to.equal('hello')
     expect(render.lastCall.lastArg).to.containSubset({
       loading: true,
       loaded: false,
@@ -72,11 +85,11 @@ describe('LinkLoader', () => {
     expect(arg1.loaded).to.be.false
     expect(arg1.error).to.be.an.instanceOf(Error)
   })
-  it(`doesn't create a duplicate link`, async function (): Promise<void> {
+  it(`doesn't create a duplicate link`, async function () {
     this.timeout(10000)
     const preexisting = document.createElement('link')
     preexisting.href = 'baz'
-    ;(document.body: any).appendChild(preexisting)
+    ;(document.head: any).appendChild(preexisting)
 
     const render = sinon.spy(() => 'hello')
     let onLoad, onError
@@ -85,11 +98,17 @@ describe('LinkLoader', () => {
       onError = reject
     })
     const comp = mount(
-      <LinkLoader href="baz" id="linkId" onLoad={onLoad} onError={onError}>
+      <LinkLoader
+        href="baz"
+        id="linkId"
+        onLoad={onLoad}
+        onError={onError}
+        act={act}
+      >
         {render}
       </LinkLoader>
     )
-    expect(comp.text()).to.equal('hello')
+    expect(comp.container.innerHTML).to.equal('hello')
     expect(render.lastCall.lastArg).to.containSubset({
       loading: false,
       loaded: true,
@@ -101,9 +120,9 @@ describe('LinkLoader', () => {
     const arg1 = render.lastCall.lastArg
     expect(arg1.loading).to.be.false
     expect(arg1.loaded).to.be.true
-    expect(arg1.error).to.be.null
+    expect(arg1.error).to.be.undefined
   })
-  it(`doesn't call onLoad after href changes`, async function (): Promise<void> {
+  it(`doesn't call onLoad after href changes`, async function () {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
@@ -114,19 +133,21 @@ describe('LinkLoader', () => {
       onError = reject
     })
     const comp = mount(
-      <LinkLoader href="qux" id="linkId1" onLoad={oldOnLoad}>
+      <LinkLoader href="qux" id="linkId1" onLoad={oldOnLoad} act={act}>
         {render}
       </LinkLoader>
     )
-    comp
-      .setProps({
-        href: 'qlomb',
-        id: 'linkId2',
-        onLoad,
-        onError,
-        children: render,
-      })
-      .update()
+    comp.rerender(
+      <LinkLoader
+        href="qlomb"
+        id="linkId2"
+        onLoad={onLoad}
+        onError={onError}
+        act={act}
+      >
+        {render}
+      </LinkLoader>
+    )
     expect(render.lastCall.lastArg).to.containSubset({
       loading: true,
       loaded: false,
@@ -143,10 +164,10 @@ describe('LinkLoader', () => {
     expect(render.lastCall.lastArg).to.containSubset({
       loading: false,
       loaded: true,
-      error: null,
+      error: undefined,
     })
   })
-  it(`doesn't call onError after href changes`, async function (): Promise<void> {
+  it(`doesn't call onError after href changes`, async function () {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
@@ -157,19 +178,21 @@ describe('LinkLoader', () => {
       onError = reject
     })
     const comp = mount(
-      <LinkLoader href="quxage" id="linkId1" onError={oldOnError}>
+      <LinkLoader href="quxage" id="linkId1" onError={oldOnError} act={act}>
         {render}
       </LinkLoader>
     )
-    comp
-      .setProps({
-        href: 'qlombage',
-        id: 'linkId2',
-        onLoad,
-        onError,
-        children: render,
-      })
-      .update()
+    comp.rerender(
+      <LinkLoader
+        href="qlombage"
+        id="linkId2"
+        onLoad={onLoad}
+        onError={onError}
+        act={act}
+      >
+        {render}
+      </LinkLoader>
+    )
     expect(render.lastCall.lastArg).to.containSubset({
       loading: true,
       loaded: false,
@@ -186,16 +209,16 @@ describe('LinkLoader', () => {
     expect(render.lastCall.lastArg).to.containSubset({
       loading: false,
       loaded: true,
-      error: null,
+      error: undefined,
     })
   })
-  it(`doesn't call onLoad after unmount`, async function (): Promise<void> {
+  it(`doesn't call onLoad after unmount`, async function () {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
     const oldOnLoad = sinon.spy()
     const comp = mount(
-      <LinkLoader href="blah" id="linkId" onLoad={oldOnLoad}>
+      <LinkLoader href="blah" id="linkId" onLoad={oldOnLoad} act={act}>
         {render}
       </LinkLoader>
     )
@@ -206,13 +229,13 @@ describe('LinkLoader', () => {
     await new Promise((resolve) => setTimeout(resolve, 100))
     expect(oldOnLoad.called).to.be.false
   })
-  it(`doesn't call onError after unmount`, async function (): Promise<void> {
+  it(`doesn't call onError after unmount`, async function () {
     this.timeout(10000)
 
     const render = sinon.spy(() => 'hello')
     const oldOnError = sinon.spy()
     const comp = mount(
-      <LinkLoader href="blag" id="linkId" onError={oldOnError}>
+      <LinkLoader href="blag" id="linkId" onError={oldOnError} act={act}>
         {render}
       </LinkLoader>
     )
@@ -225,7 +248,7 @@ describe('LinkLoader', () => {
   })
 })
 describe(`loadLink`, function () {
-  it(`errors if document is not defined`, async function (): Promise<void> {
+  it(`errors if document is not defined`, async function () {
     const prevDocument = document
     document = undefined // eslint-disable-line no-global-assign
     try {
@@ -246,7 +269,7 @@ describe(`SSR`, function () {
     const registry = new LinksRegistry()
     const comp = mount(
       <LinksRegistryContext.Provider value={registry}>
-        <LinkLoader href="SSR" id="linkId">
+        <LinkLoader href="SSR" id="linkId" act={act}>
           {render}
         </LinkLoader>
       </LinksRegistryContext.Provider>
@@ -256,7 +279,7 @@ describe(`SSR`, function () {
       loaded: true,
       error: undefined,
     })
-    expect(comp.text()).to.equal('hello')
+    expect(comp.container.innerHTML).to.equal('hello')
 
     const head = mount(
       <head>
@@ -264,6 +287,6 @@ describe(`SSR`, function () {
         {registry.linkTags()}
       </head>
     )
-    expect(head.find('link').prop('href')).to.equal('SSR')
+    expect(head.container.querySelector('link').href).to.contain('SSR')
   })
 })

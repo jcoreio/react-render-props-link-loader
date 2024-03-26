@@ -2,20 +2,20 @@
 
 import * as React from 'react'
 import loadLink, { getState } from './loadLink'
-import PropTypes from 'prop-types'
 
-export type State = {
+export type State = {|
   loading: boolean,
   loaded: boolean,
   error: ?Error,
   promise: ?Promise<any>,
-}
+|}
 
 export type Props = {
   href: string,
   onLoad?: ?() => any,
   onError?: ?(error: Error) => any,
   children?: ?(state: State) => ?React.Node,
+  act?: ?(action: () => void) => void,
   ...
 }
 
@@ -25,10 +25,54 @@ export type InnerProps = {
   ...
 }
 
+export function useLink(props: Props): State {
+  const isMounted = React.useRef(true)
+  React.useEffect(
+    () => () => {
+      isMounted.current = false
+    },
+    []
+  )
+
+  const linksRegistry = React.useContext(LinksRegistryContext)
+
+  const [, rerender] = React.useReducer((count = 0) => count + 1)
+  const propsRef = React.useRef(props)
+  propsRef.current = props
+
+  const act = React.useCallback((fn: () => void) => {
+    if (!isMounted.current) return
+    const { act } = propsRef.current
+    if (act) act(fn)
+    else fn()
+  }, [])
+
+  const promise = React.useMemo(
+    () => loadLink({ ...props, linksRegistry }),
+    [props.href, linksRegistry]
+  )
+
+  React.useEffect(() => {
+    if (!isMounted.current) return
+    promise.then(
+      () =>
+        act(() => {
+          propsRef.current.onLoad?.()
+          rerender()
+        }),
+      (error: Error) =>
+        act(() => {
+          propsRef.current.onError?.(error)
+          rerender()
+        })
+    )
+  }, [promise])
+
+  return getState({ ...props, linksRegistry })
+}
+
 export class LinksRegistry {
-  links: Array<{
-    href: string,
-  }> = []
+  links: Array<{ href: string, ... }> = []
   results: { [href: string]: { error: ?Error } } = {}
   promises: { [href: string]: Promise<any> } = {}
 
@@ -36,8 +80,8 @@ export class LinksRegistry {
     return this.links.map((props) => (
       <link
         {...props}
-        nonce={options ? options.nonce : undefined}
         key={props.href}
+        nonce={options ? options.nonce : undefined}
       />
     ))
   }
@@ -46,66 +90,12 @@ export class LinksRegistry {
 export const LinksRegistryContext: React.Context<?LinksRegistry> =
   React.createContext(null)
 
-class LinkLoader extends React.PureComponent<InnerProps, State> {
-  mounted: boolean = false
-  promise: Promise<void> = loadLink(this.props)
-  state = getState(this.props)
-
-  static propTypes = {
-    href: PropTypes.string.isRequired,
-    onLoad: PropTypes.func,
-    onError: PropTypes.func,
-    children: PropTypes.func,
+export default function LinkLoader(props: Props): React.Node | null {
+  const state = useLink(props)
+  const { children } = props
+  if (children) {
+    const result = children({ ...state })
+    return result == null ? null : result
   }
-
-  componentDidMount() {
-    this.mounted = true
-    this.listenTo(this.promise)
-  }
-
-  componentWillUnmount() {
-    this.mounted = false
-  }
-
-  componentDidUpdate() {
-    const promise = loadLink(this.props)
-    if (this.promise !== promise) {
-      this.setState(getState(this.props))
-      this.promise = promise
-      this.listenTo(promise)
-    }
-  }
-
-  listenTo(promise: Promise<any>) {
-    const { props } = this
-    const { onLoad, onError } = props
-    promise.then(
-      () => {
-        if (!this.mounted || this.promise !== promise) return
-        if (onLoad) onLoad()
-        this.setState(getState(props))
-      },
-      (error: Error) => {
-        if (!this.mounted || this.promise !== promise) return
-        if (onError) onError(error)
-        this.setState(getState(props))
-      }
-    )
-  }
-
-  render(): React.Node {
-    const { children } = this.props
-    if (children) {
-      const result = children({ ...this.state })
-      return result == null ? null : result
-    }
-    return null
-  }
+  return null
 }
-
-const ConnectedLinksLoader: React.ComponentType<Props> = (props: Props) => (
-  <LinksRegistryContext.Consumer>
-    {(linksRegistry) => <LinkLoader {...props} linksRegistry={linksRegistry} />}
-  </LinksRegistryContext.Consumer>
-)
-export default ConnectedLinksLoader

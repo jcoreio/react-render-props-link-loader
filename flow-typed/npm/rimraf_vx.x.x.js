@@ -14,7 +14,7 @@
  */
 
 declare module 'rimraf' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,17 +23,17 @@ declare module 'rimraf' {
  * needed.
  */
 declare module 'rimraf/bin' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'rimraf/rimraf' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'rimraf/bin.js' {
-  declare module.exports: $Exports<'rimraf/bin'>;
+  declare module.exports: $Exports<'rimraf/bin'>
 }
 declare module 'rimraf/rimraf.js' {
-  declare module.exports: $Exports<'rimraf/rimraf'>;
+  declare module.exports: $Exports<'rimraf/rimraf'>
 }
